@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.yanzhenjie.permission.AndPermission;
-import com.yanzhenjie.permission.PermissionListener;
-import com.yanzhenjie.permission.Rationale;
-import com.yanzhenjie.permission.RationaleListener;
+
 
 import java.util.List;
 
@@ -30,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_request_single:
+                AndPermission.hasPermission(this,Manifest.permission.CAMERA);
                 AndPermission.with(this).permission(Manifest.permission.CAMERA).
                         requestCode(REQUEST_CODE_PERMISSION_SD).
                         callback(permissionListener).
@@ -59,18 +57,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onFailed(int requestCode, @NonNull List<String> deniedPermissions) {
             switch (requestCode) {
-                case REQUEST_CODE_PERMISSION_SD: {
-                    Toast.makeText(MainActivity.this, "获取日历权限失败", Toast.LENGTH_SHORT).show();
-                    break;
-                }
+            case REQUEST_CODE_PERMISSION_SD: {
+                Toast.makeText(MainActivity.this, "获取日历权限失败", Toast.LENGTH_SHORT).show();
+                break;
             }
+        }
 
             // 用户否勾选了不再提示并且拒绝了权限，那么提示用户到设置中授权。
+
             if (AndPermission.hasAlwaysDeniedPermission(MainActivity.this, deniedPermissions)) {
                 // 第一种：用默认的提示语。
                 AndPermission.defaultSettingDialog(MainActivity.this, 100).show();
 
             }
+
+        }
+
+        @Override
+        public void onRequestPermissionsResult(@NonNull String[] permissions, @NonNull int[] grantResults) {
 
         }
     };
